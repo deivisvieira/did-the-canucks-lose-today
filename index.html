@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Did the Canucks lose today?</title>
+<meta name="description" content="One question, one answer: did the Vancouver Canucks lose today? Live from the NHL.">
+<meta property="og:title" content="Did the Canucks lose today?">
+<meta property="og:description" content="One question, one answer. Live from the NHL.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#00122e">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🏒%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@800&family=Hanken+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --deep: #00122e;
+    --navy: #00205B;
+    --green: #00843D;
+    --ice: #EEF2F6;
+    --muted: #B5BDCA;
+    --bg: var(--deep);
+    --fg: var(--ice);
+    --display: "Big Shoulders Display", "Arial Narrow", "Helvetica Neue", sans-serif;
+    --text: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  body[data-state="no"] { --bg: var(--green); --muted: #D6EBDD; }
+  body[data-state="otl"], body[data-state="pending"], body[data-state="none"] { --bg: var(--navy); }
+
+  * { box-sizing: border-box; }
+  html { background: var(--bg); transition: background-color .6s ease; }
+  body {
+    margin: 0;
+    min-height: 100svh;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--text);
+    font-size: 1rem;
+    line-height: 1.5;
+    transition: background-color .6s ease;
+  }
+
+  #rain { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+  .tear {
+    position: absolute;
+    top: -6vh;
+    background: rgba(190, 215, 255, .5);
+    border-radius: 50% 0 50% 50%;
+    transform: rotate(-45deg);
+    animation: fall linear infinite;
+  }
+  @keyframes fall { from { translate: 0 -8vh; } to { translate: 0 118vh; } }
+  @media (prefers-reduced-motion: reduce) { #rain { display: none; } }
+
+  .wrap {
+    position: relative;
+    z-index: 1;
+    min-height: 100svh;
+    max-width: 68rem;
+    margin: 0 auto;
+    padding: clamp(1.25rem, 4vw, 3rem);
+    display: flex;
+    flex-direction: column;
+  }
+  h1 { margin: 0; font-size: 1.125rem; font-weight: 600; }
+
+  main { flex: 1; display: flex; flex-direction: column; justify-content: center; padding-block: 2.5rem; }
+  .answer {
+    margin: 0;
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: clamp(5.5rem, 27vw, 18rem);
+    line-height: .86;
+    letter-spacing: -.01em;
+    overflow-wrap: anywhere;
+  }
+  .detail { margin: 1.5rem 0 0; font-size: clamp(1.25rem, 3vw, 1.75rem); line-height: 1.3; max-width: 34ch; font-weight: 500; }
+  .aside { margin: .6rem 0 0; color: var(--muted); max-width: 44ch; }
+  .aside:empty, .detail:empty { display: none; }
+
+  .actions { display: flex; align-items: center; gap: 1rem; margin-top: 1.75rem; min-height: 2.75rem; }
+  .btn {
+    font: 600 1rem var(--text);
+    color: inherit;
+    background: transparent;
+    border: 1.5px solid currentColor;
+    border-radius: 999px;
+    padding: .6rem 1.4rem;
+    cursor: pointer;
+  }
+  .btn:hover { background: var(--fg); color: var(--bg); }
+  .btn:focus-visible, a:focus-visible { outline: 3px solid var(--fg); outline-offset: 3px; }
+  .btn[hidden] { display: none; }
+  #toast { color: var(--muted); font-size: .95rem; }
+
+  .facts { margin-top: 2rem; display: grid; gap: .3rem; color: var(--muted); }
+  .facts p { margin: 0; }
+
+  .history { margin-top: 1rem; }
+  .history h2 { margin: 0; font-size: 1rem; font-weight: 600; }
+  .streak { margin: .15rem 0 .8rem; color: var(--muted); }
+  .tiles { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(10, 1fr); gap: .4rem; }
+  @media (max-width: 640px) { .tiles { grid-template-columns: repeat(5, 1fr); } }
+  .tile {
+    border: 1px solid rgba(255, 255, 255, .35);
+    border-radius: .4rem;
+    padding: .5rem .45rem;
+    min-height: 4.75rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-size: .8rem;
+    line-height: 1.25;
+  }
+  .tile b { font-family: var(--display); font-weight: 800; font-size: 1.7rem; line-height: 1; }
+  .tile.w { background: var(--green); color: #fff; }
+  .tile.l { background: var(--ice); color: var(--deep); border-color: var(--ice); }
+  .tile.o { background: var(--ice); color: var(--deep); border-color: var(--ice); box-shadow: inset 0 -.4rem 0 var(--green); padding-bottom: .8rem; }
+  .legend { margin: .7rem 0 0; font-size: .875rem; color: var(--muted); }
+
+  footer { margin-top: 2.5rem; font-size: .875rem; color: var(--muted); max-width: 60ch; }
+  footer a { color: inherit; }
+</style>
+</head>
+<body data-state="loading">
+<div id="rain" aria-hidden="true"></div>
+
+<div class="wrap">
+  <header><h1>Did the Canucks lose today?</h1></header>
+
+  <main>
+    <section aria-live="polite" aria-atomic="true">
+      <p class="answer" id="answer">…</p>
+      <p class="detail" id="detail">Checking the score.</p>
+      <p class="aside" id="aside"></p>
+    </section>
+    <div class="actions">
+      <button class="btn" id="share" type="button" hidden>Share</button>
+      <button class="btn" id="retry" type="button" hidden>Try again</button>
+      <span id="toast" role="status"></span>
+    </div>
+    <div class="facts" id="facts"></div>
+  </main>
+
+  <section class="history" id="history" hidden>
+    <h2>Last 10 games</h2>
+    <p class="streak" id="streak"></p>
+    <ol class="tiles" id="tiles"></ol>
+    <p class="legend">Oldest on the left. W is a win, L a loss, OL an overtime or shootout loss.</p>
+  </section>
+
+  <footer>
+    <noscript>This site needs JavaScript to fetch the score.</noscript>
+    Scores come from ESPN’s public data. An unofficial fan project, not affiliated with the NHL or the Vancouver Canucks.
+  </footer>
+</div>
+
+<script>
+(() => {
+  const TEAM = "VAN";
+  const TEAM_ID = "22"; // Vancouver Canucks on ESPN
+  const TZ = "America/Vancouver";
+  const BASE = `https://site.api.espn.com/apis/site/v2/sports/hockey/nhl/teams/${TEAM_ID}/schedule`;
+  const SITE = "https://deivisvieira.github.io/did-the-canucks-lose-today";
+
+  const $ = (id) => document.getElementById(id);
+  const dayKey = new Intl.DateTimeFormat("en-CA", { timeZone: TZ, year: "numeric", month: "2-digit", day: "2-digit" });
+  const dayLabel = new Intl.DateTimeFormat("en-CA", { timeZone: TZ, weekday: "short", month: "short", day: "numeric" });
+  const timeLabel = new Intl.DateTimeFormat("en-CA", { hour: "numeric", minute: "2-digit", timeZoneName: "short" });
+
+  const JOKES = [
+    "Off day. The one day a loss is mathematically impossible.",
+    "No game today. Hope is still undefeated.",
+    "No game today. Go outside. The Canucks can’t hurt you out there.",
+    "No game. Your optimism has the day off to recharge. It will be drained by the next puck drop.",
+    "Off day. Somewhere, a Canucks fan is saying “this is our year.”",
+    "No game today. Statistically, our best day.",
+    "No game today. The feelings are intact. For now.",
+    "Off day. Vancouver’s rain is just the sky practising.",
+    "No game. Enjoy it. You know how this goes.",
+    "No game today. We’re still a playoff team in October. Technically.",
+    "Off day. Time to rebuild your faith, as usual.",
+    "No game today. The power play is also taking the day off, for once on purpose."
+  ];
+  const PREGAME = [
+    "Optimism is free until puck drop.",
+    "Deep breath. Soft hands.",
+    "Hope is free until then.",
+    "Do not look at the standings yet."
+  ];
+
+  const byStart = (a, b) => a.start - b.start;
+  const pick = (list, key) => list[[...key].reduce((s, c) => s + c.charCodeAt(0), 0) % list.length];
+  const scoreText = (i) => `${i.ours}–${i.theirs}`;
+  const how = (i) => (i.home ? "vs" : "at") + " " + i.them.name;
+  const extra = (i) => (i.type === "SO" ? "a shootout" : "overtime");
+
+  // ESPN returns scores as numbers, strings or {value, displayValue} depending on the endpoint.
+  const num = (s) => {
+    if (s == null) return null;
+    const v = typeof s === "object" ? (s.value != null ? s.value : s.displayValue) : s;
+    const n = Number(v);
+    return Number.isFinite(n) ? n : null;
+  };
+
+  // Turn one ESPN event into the shape the page uses.
+  function normalize(ev, playoff) {
+    const comp = ev.competitions && ev.competitions[0];
+    if (!comp || !comp.competitors) return null;
+    const st = comp.status || ev.status || {};
+    const t = st.type || {};
+    if (/POSTPONED|CANCEL/i.test(t.name || "")) return null;
+
+    const us = comp.competitors.find((c) => c.team && (String(c.team.id) === TEAM_ID || c.team.abbreviation === TEAM));
+    const them = comp.competitors.find((c) => c !== us);
+    if (!us || !them || !them.team) return null;
+
+    const text = `${t.detail || ""} ${t.shortDetail || ""} ${t.description || ""}`;
+    const type = /\bSO\b|shootout/i.test(text) ? "SO" : /OT|[Oo]vertime/.test(text) ? "OT" : "REG";
+    const state = t.state || "pre"; // pre | in | post
+    const ours = num(us.score);
+    const theirs = num(them.score);
+
+    let r = null;
+    if (state === "post" && ours != null && theirs != null) {
+      if (ours > theirs) r = "W";
+      else if (type === "REG" || playoff) r = "L";
+      else r = "OL";
+    }
+    return {
+      start: new Date(ev.date || comp.date),
+      state,
+      home: us.homeAway === "home",
+      ours, theirs, type, r,
+      detail: t.detail || t.shortDetail || "",
+      them: {
+        abbrev: them.team.abbreviation || "",
+        name: them.team.displayName || them.team.name || them.team.abbreviation || "the opponent"
+      }
+    };
+  }
+
+  async function fetchSeason(seasontype) {
+    const res = await fetch(`${BASE}?seasontype=${seasontype}`, { cache: "no-store" });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const data = await res.json();
+    return (data.events || []).map((ev) => normalize(ev, seasontype === 3)).filter(Boolean);
+  }
+
+  async function fetchGames() {
+    const [reg, post] = await Promise.allSettled([fetchSeason(2), fetchSeason(3)]);
+    if (reg.status === "rejected") throw reg.reason;
+    const all = [...reg.value, ...(post.status === "fulfilled" ? post.value : [])];
+    return all.sort(byStart);
+  }
+
+  let lastRain = null;
+  let shareText = "";
+  let loadedOnce = false;
+
+  function setRain(kind) {
+    if (kind === lastRain) return;
+    lastRain = kind;
+    const box = $("rain");
+    box.textContent = "";
+    const count = kind === "heavy" ? 44 : kind === "light" ? 14 : 0;
+    for (let n = 0; n < count; n++) {
+      const d = document.createElement("span");
+      const w = 7 + Math.random() * 7;
+      d.className = "tear";
+      d.style.left = Math.random() * 100 + "%";
+      d.style.width = w + "px";
+      d.style.height = w + "px";
+      d.style.animationDuration = 3 + Math.random() * 3.5 + "s";
+      d.style.animationDelay = -Math.random() * 6 + "s";
+      box.appendChild(d);
+    }
+  }
+
+  function setView(state, answer, detail, aside, rain) {
+    document.body.dataset.state = state;
+    $("answer").textContent = answer;
+    $("detail").textContent = detail || "";
+    $("aside").textContent = aside || "";
+    document.title = `${answer} Did the Canucks lose today?`;
+    setRain(rain || null);
+    $("share").hidden = state === "loading" || state === "error";
+    $("retry").hidden = state !== "error";
+    shareText = `Did the Canucks lose today? ${answer} ${detail || ""}`.trim();
+  }
+
+  function addFact(text) {
+    const p = document.createElement("p");
+    p.textContent = text;
+    $("facts").appendChild(p);
+  }
+
+  const verdict = (i) => (i.r === "W" ? "Won" : i.r === "L" ? "Lost" : "Lost in " + extra(i));
+
+  function renderHistory(finals) {
+    const last = finals.slice(-10);
+    const tiles = $("tiles");
+    tiles.textContent = "";
+    if (!last.length) { $("history").hidden = true; return; }
+    $("history").hidden = false;
+
+    last.forEach((i) => {
+      const li = document.createElement("li");
+      li.className = "tile " + (i.r === "W" ? "w" : i.r === "L" ? "l" : "o");
+      const label = `${dayLabel.format(i.start)}: ${verdict(i)} ${scoreText(i)} ${how(i)}`;
+      li.title = label;
+      li.setAttribute("aria-label", label);
+      const b = document.createElement("b");
+      b.textContent = i.r;
+      const opp = document.createElement("span");
+      opp.textContent = `${i.home ? "vs" : "@"} ${i.them.abbrev}`;
+      const sc = document.createElement("span");
+      sc.textContent = scoreText(i);
+      li.append(b, opp, sc);
+      tiles.appendChild(li);
+    });
+
+    const cat = (i) => (i.r === "W" ? "W" : "L");
+    const rev = [...finals].reverse();
+    let n = 0;
+    while (n < rev.length && cat(rev[n]) === cat(rev[0])) n++;
+    const won = cat(rev[0]) === "W";
+    const sawOT = rev.slice(0, n).some((i) => i.r === "OL");
+    let s;
+    if (n === 1) s = won ? "Won the last game." : "Lost the last game.";
+    else s = `${won ? "Won" : "Lost"} ${n} straight.`;
+    if (!won && sawOT && n > 1) s += " Counting overtime losses.";
+    $("streak").textContent = s;
+  }
+
+  function render(games) {
+    const now = new Date();
+    const today = dayKey.format(now);
+    const todays = games.filter((i) => dayKey.format(i.start) === today);
+    const finals = games.filter((i) => i.state === "post" && i.r).sort(byStart);
+    const next = games.filter((i) => i.state === "pre" && i.start > now).sort(byStart)[0];
+
+    $("facts").textContent = "";
+    const i = todays[0];
+
+    if (i && i.state === "post" && i.r) {
+      if (i.r === "W") {
+        setView("no", "No.", `Won ${scoreText(i)} ${how(i)}.`, "Enjoy it. Don’t read the comments.");
+      } else if (i.r === "L") {
+        setView("yes", "Yes.", `Lost ${scoreText(i)} ${how(i)}.`, "", "heavy");
+      } else {
+        setView("otl", "Sort of.", `Lost ${scoreText(i)} in ${extra(i)}, but earned a point.`, "", "light");
+      }
+    } else if (i && i.state === "in") {
+      const sc = i.ours != null && i.theirs != null ? ` Canucks ${i.ours}, ${i.them.abbrev} ${i.theirs}.` : "";
+      setView("pending", "Not yet.", `Game in progress.${sc}`, i.detail || "Check back at the final horn.");
+    } else if (i) {
+      setView("pending", "Not yet.",
+        `Puck drops at ${timeLabel.format(i.start)} ${how(i)}.`,
+        pick(PREGAME, today));
+    } else {
+      setView("none", "No game.", pick(JOKES, today), "");
+      const lastGame = finals[finals.length - 1];
+      if (lastGame) {
+        addFact(`Last game: ${dayLabel.format(lastGame.start)}. ${verdict(lastGame)} ${scoreText(lastGame)} ${how(lastGame)}.`);
+      }
+    }
+
+    if (next && !(i && i.state !== "post")) {
+      addFact(`Next game: ${dayLabel.format(next.start)}, ${timeLabel.format(next.start)} ${how(next)}.`);
+    }
+
+    renderHistory(finals);
+  }
+
+  async function load() {
+    try {
+      render(await fetchGames());
+      loadedOnce = true;
+    } catch (err) {
+      console.error(err);
+      if (!loadedOnce) {
+        $("history").hidden = true;
+        $("facts").textContent = "";
+        setView("error", "Can’t tell.", "Couldn’t reach ESPN’s data.", "Check your connection and try again.");
+      }
+    }
+  }
+
+  $("retry").addEventListener("click", () => {
+    setView("loading", "…", "Checking the score.", "");
+    load();
+  });
+
+  $("share").addEventListener("click", async () => {
+    const text = shareText;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: "Did the Canucks lose today?", text, url: SITE });
+        return;
+      }
+      await navigator.clipboard.writeText(`${text} ${SITE}`);
+      $("toast").textContent = "Copied to clipboard.";
+      setTimeout(() => ($("toast").textContent = ""), 2500);
+    } catch (e) {
+      /* share dismissed or clipboard blocked */
+    }
+  });
+
+  load();
+  setInterval(() => { if (!document.hidden) load(); }, 60000);
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) load(); });
+})();
+</script>
+</body>
+</html>
